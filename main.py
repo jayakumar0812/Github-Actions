@@ -20,3 +20,4 @@ class Calculator:
         return a / b
         """end of line"""
         """end of line"""
+        """end of line"""
