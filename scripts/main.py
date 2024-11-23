@@ -1,10 +1,10 @@
 from flask import Flask
-
-app = Flask(_name_)
-
+ 
+app = Flask(__name__)
+ 
 @app.route("/")
 def Hello():
     return "Hello, This is combat.py file!"
-
-if _name_ == 'main':
+ 
+if __name__ == 'main':
     app.run()
