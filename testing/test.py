@@ -1,4 +1,4 @@
-from combat import Hello
+from main import Hello
 
 def testing():
     assert Hello() == "Hello, This is combat.py file!"
