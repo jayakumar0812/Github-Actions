@@ -1,4 +1,4 @@
 from main import Hello
  
 def testing():
-    assert Hello() == "Hello, This is combat.py file!"
+    assert Hello() == "Hello, This is combat.py file!"
