@@ -43,4 +43,4 @@ jobs:
           python-version: '3.10' # Match with the version in the build step
 
       - name: Run Tests
-        run: python -m unittest discover -s . -p 'test_a.py test_b.py'
+        run: python -m unittest discover -s tests -p 'test_*.py'
