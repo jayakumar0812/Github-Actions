@@ -26,4 +26,4 @@ jobs:
       run: |
           export PYTHONPATH=testing
           export PYTHONPATH=scripts
-          pytest -k "testing"
+          pytest
