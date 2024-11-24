@@ -1,29 +1,59 @@
-name: Run Single Unit Test
+name: Build and Test
 
 on:
-  workflow_dispatch: # Allows manual triggering of the workflow
+  push:
+    branches:
+      - main
   pull_request:
     branches:
-      - develop  # Run on pushes to the feature branch
- 
+      - main
+
 jobs:
-  run-single-unit-test:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Install Dependencies
-      run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest build
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    # Step 1: Check out the code
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Run Single Unit Test
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
       run: |
-          export PYTHONPATH=testing
-          export PYTHONPATH=scripts
-          pytest -k "testing"
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run unit tests
+    - name: Run unit tests
+      run: pytest tests/
+
+    # Step 5: Auto-label PRs based on results (optional)
+    - name: Add label if tests pass
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.pull_request.number,
+            labels: ['Build & Test Passed']
+          })
+
+    - name: Add label if tests fail
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.pull_request.number,
+            labels: ['Build or Test Failed']
+          })
