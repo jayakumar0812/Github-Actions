@@ -58,5 +58,5 @@ jobs:
       - name: Apply Labels to Issue
         uses: actions-ecosystem/action-add-labels@v1
         with:
-          github_token: ${{ secrets.SECRETS_TOKEN }}
+          github_token: ${{ secrets.SECRET_KEY }}
           labels: ${{ env.labels }}
