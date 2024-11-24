@@ -1,0 +1,62 @@
+name: Auto Label
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Determine Labels
+        id: determine-labels
+        run: |
+          ISSUE_CONTENT=$(jq -r '.issue.title + " " + .issue.body' "${{ github.event_path }}")
+          LABELS=""
+          
+          # Define label rules
+          if [[ "$ISSUE_CONTENT" == "bug" ]]; then
+            LABELS+="bug,"
+          fi
+          
+          if [[ "$ISSUE_CONTENT" == "feature" ]]; then
+            LABELS+="enhancement,"
+          fi
+          
+          if [[ "$ISSUE_CONTENT" == "docs" ]]; then
+            LABELS+="documentation,"
+          fi
+          
+          if [[ "$ISSUE_CONTENT" == "frontend" ]]; then
+            LABELS+="FrontEnd,"
+          fi
+          
+          if [[ "$ISSUE_CONTENT" == "backend" ]]; then
+            LABELS+="backend,"
+          fi
+          
+          if [[ "$ISSUE_CONTENT" == "UI" ]]; then
+            LABELS+="UI,"
+          fi
+
+          # Remove trailing comma and export
+          LABELS=${LABELS%,}
+          echo "labels=$LABELS" >> $GITHUB_ENV
+        
+      - name: Debug Labels
+        run: |
+          echo "Labels determined: ${{ env.labels }}"
+
+      - name: Apply Labels to Issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.SECRETS_TOKEN }}
+          labels: ${{ env.labels }}
